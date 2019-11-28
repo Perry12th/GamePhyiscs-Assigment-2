@@ -189,6 +189,10 @@
     <ClInclude Include="..\include\IMGUI\imstb_textedit.h" />
     <ClInclude Include="..\include\IMGUI\imstb_truetype.h" />
     <ClInclude Include="..\include\IMGUI_SDL\imgui_sdl.h" />
+    <ClInclude Include="..\src\BoxCollider.h" />
+    <ClInclude Include="..\src\CapsuleCollider.h" />
+    <ClInclude Include="..\src\CircleCollider.h" />
+    <ClInclude Include="..\src\Collider.h" />
     <ClInclude Include="..\src\CollisionManager.h" />
     <ClInclude Include="..\src\Config.h" />
     <ClInclude Include="..\src\DisplayObject.h" />
@@ -197,6 +201,7 @@
     <ClInclude Include="..\src\Game.h" />
     <ClInclude Include="..\src\GameObject.h" />
     <ClInclude Include="..\src\Label.h" />
+    <ClInclude Include="..\src\LineCollider.h" />
     <ClInclude Include="..\src\Mine.h" />
     <ClInclude Include="..\src\MoveState.h" />
     <ClInclude Include="..\src\Planet.h" />

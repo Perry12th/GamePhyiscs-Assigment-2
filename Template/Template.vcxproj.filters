@@ -25,6 +25,9 @@
     <Filter Include="Game Objects">
       <UniqueIdentifier>{4df01ff0-0e04-4c4d-ac5d-b7efa07fd705}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Colliders">
+      <UniqueIdentifier>{dcdd8263-e666-47ea-a28b-c666137df0f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\main.cpp">
@@ -184,6 +187,21 @@
     </ClInclude>
     <ClInclude Include="..\src\MoveState.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Collider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CircleCollider.h">
+      <Filter>Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\BoxCollider.h">
+      <Filter>Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\LineCollider.h">
+      <Filter>Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CapsuleCollider.h">
+      <Filter>Colliders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

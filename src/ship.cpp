@@ -5,6 +5,8 @@
 #include "PlayScene.h"
 #include "GLM/gtx/string_cast.hpp"
 #include <math.h>
+#include "CircleCollider.h"
+#include <algorithm>
 
 
 
@@ -23,6 +25,9 @@ Ship::Ship() :
 	setIsColliding(false);
 	setType(GameObjectType::SHIP);
 	setState(State::IDLE);
+
+	// set the collider shape
+	setCollisionShape(CIRCLE);
 }
 
 
@@ -61,6 +66,7 @@ void Ship::m_checkState()
 
 void Ship::update()
 {
+	
 	//move();
 }
 

@@ -4,6 +4,7 @@
 
 #include <glm\vec2.hpp>
 #include <string>
+#include "Collider.h"
 
 enum GameObjectType {
 	NONE = -1,
@@ -51,6 +52,8 @@ public:
 	GameObjectType getType();
 	State getState();
 
+	CollisionShape getCollisionShape();
+
 	// setters for common variables
 	void setPosition(glm::vec2 newPosition);
 	void setWidth(int newWidth);
@@ -60,6 +63,9 @@ public:
 	void setType(GameObjectType newType);
 	void setState(State newState);
 	void setAcceleration(glm::vec2 newAcceleration);
+
+	void setCollisionShape(CollisionShape newCollisionShape);
+	
 
 private:
 	// transform variables
@@ -85,6 +91,7 @@ private:
 	bool m_isColliding;
 	GameObjectType m_type;
 	State m_state;
+	CollisionShape m_collisionShape;
 };
 
 #endif

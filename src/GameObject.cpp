@@ -62,6 +62,11 @@ State GameObject::getState()
 	return m_state;
 }
 
+CollisionShape GameObject::getCollisionShape()
+{
+	return m_collisionShape;
+}
+
 
 void GameObject::setPosition(glm::vec2 newPosition)
 {
@@ -103,4 +108,9 @@ void GameObject::setState(State newState)
 void GameObject::setAcceleration(glm::vec2 newAcceleration)
 {
 	m_acceleration = newAcceleration;
+}
+
+void GameObject::setCollisionShape(CollisionShape newCollisionShape)
+{
+	m_collisionShape = newCollisionShape;
 }
