@@ -34,6 +34,8 @@ public:
 
 	glm::vec2 getTarget();
 	void setTarget(glm::vec2 position);
+
+	void setRotation(float angle);
 private:
 
 

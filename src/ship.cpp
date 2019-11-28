@@ -4,6 +4,8 @@
 #include "GLM/gtx/rotate_vector.hpp"
 #include "PlayScene.h"
 #include "GLM/gtx/string_cast.hpp"
+#include <math.h>
+
 
 
 Ship::Ship() :
@@ -119,6 +121,14 @@ glm::vec2 Ship::getTarget()
 void Ship::setTarget(glm::vec2 position)
 {
 	m_target = position;
+}
+
+void Ship::setRotation(float angle)
+{
+	m_currentDirection = angle;
+	auto size = TheTextureManager::Instance()->getTextureSize("ship");
+	setWidth(size.x);
+	setHeight(size.y);
 }
 
 

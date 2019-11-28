@@ -1,4 +1,5 @@
 #include "CollisionManager.h"
+#include "Util.h"
 
 
 
@@ -15,7 +16,7 @@ bool CollisionManager::squaredRadiusCheck(GameObject * object1, GameObject * obj
 {
 	glm::vec2 P1 = object1->getPosition();
 	glm::vec2 P2 = object2->getPosition();
-	int halfHeights = (object1->getHeight() + object2->getHeight()) * 0.5;
+	int halfHeights = (object1->getHeight() + object2->getHeight()) * 0.5f;
 
 	//if (glm::distance(P1, P2) < halfHeights) {
 
@@ -51,7 +52,50 @@ bool CollisionManager::squaredRadiusCheck(GameObject * object1, GameObject * obj
 
 bool CollisionManager::AABBCheck(GameObject * object1, GameObject * object2)
 {
-	//TODO: write the AABBCheck Algorithm in here
+	glm::vec2 P1 = object1->getPosition();
+	glm::vec2 P2 = object2->getPosition();
+	float P1width = object1->getWidth();
+	float P1height = object1->getHeight();
+	float P2width = object2->getWidth();
+	float P2height = object2->getHeight();
+
+	
+
+	if(
+		P1.x < P2.x + P2width &&
+		P1.x + P1width > P2.x &&
+		P1.y < P2.y + P2height &&
+		P1.y + P1height > P2.y
+		)
+	{
+		if (!object2->getIsColliding()) {
+
+			object2->setIsColliding(true);
+
+			switch (object2->getType()) {
+			case PLANET:
+				std::cout << "Collision with Planet!" << std::endl;
+				TheSoundManager::Instance()->playSound("yay", 0);
+				break;
+			case MINE:
+				std::cout << "Collision with Mine!" << std::endl;
+				TheSoundManager::Instance()->playSound("thunder", 0);
+				break;
+			default:
+				//std::cout << "Collision with unknown type!" << std::endl;
+				break;
+			}
+
+			return true;
+		}
+		return false;
+	}
+	else
+	{
+		object2->setIsColliding(false);
+		return false;
+	}
+	
 	return false;
 }
 
