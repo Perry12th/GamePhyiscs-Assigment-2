@@ -31,9 +31,15 @@ void StartScene::draw()
 		ImGuiSDL::Render(ImGui::GetDrawData());
 		SDL_SetRenderDrawColor(TheGame::Instance()->getRenderer(), 255, 255, 255, 255);
 
-		Util::DrawRect(m_pShip->getPosition() - glm::vec2(m_pShip->getWidth() * 0.5f, m_pShip->getHeight() *0.5f), m_pShip->getWidth(), m_pShip->getHeight());
+		// debug collider shapes
+		//Util::DrawRect(m_pShip->getPosition() - glm::vec2(m_pShip->getWidth() * 0.5f, m_pShip->getHeight() *0.5f), m_pShip->getWidth(), m_pShip->getHeight());
 		Util::DrawRect(m_pPlanet->getPosition() - glm::vec2(m_pPlanet->getWidth() * 0.5f, m_pPlanet->getHeight() *0.5f), m_pPlanet->getWidth(), m_pPlanet->getHeight());
 		Util::DrawRect(m_pMine->getPosition() - glm::vec2(m_pMine->getWidth() * 0.5f, m_pMine->getHeight() *0.5f), m_pMine->getWidth(), m_pMine->getHeight());
+		
+
+		Util::DrawCircle(m_pShip->getPosition(), std::max(m_pShip->getWidth() * 0.5, m_pShip->getHeight() * 0.5));
+		//Util::DrawCircle(m_pPlanet->getPosition(), std::max(m_pPlanet->getWidth() * 0.5, m_pPlanet->getHeight() * 0.5));
+		//Util::DrawCircle(m_pMine->getPosition(), std::max(m_pMine->getWidth() * 0.5, m_pMine->getHeight() * 0.5));
 	}
 }
 
@@ -46,9 +52,13 @@ void StartScene::update()
 
 	//CollisionManager::squaredRadiusCheck(m_pShip, m_pPlanet);
 	//CollisionManager::squaredRadiusCheck(m_pShip, m_pMine);
-	//
-	CollisionManager::AABBCheck(m_pShip, m_pPlanet);
-	CollisionManager::AABBCheck(m_pShip, m_pMine);
+
+	//CollisionManager::AABBCheck(m_pShip, m_pPlanet);
+	//CollisionManager::AABBCheck(m_pShip, m_pMine);
+
+	CollisionManager::circleAABBCheck(m_pShip, m_pPlanet);
+	CollisionManager::circleAABBCheck(m_pShip, m_pMine);
+	
 	
 	if (m_displayUI)
 	{
