@@ -102,6 +102,18 @@
     <ClCompile Include="..\src\DisplayObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\BulletStormScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Ball.cpp">
+      <Filter>Game Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Brick.cpp">
+      <Filter>Game Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Bullet.cpp">
+      <Filter>Game Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Game.h">
@@ -202,6 +214,18 @@
     </ClInclude>
     <ClInclude Include="..\src\CapsuleCollider.h">
       <Filter>Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\BulletStormScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Ball.h">
+      <Filter>Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Brick.h">
+      <Filter>Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Bullet.h">
+      <Filter>Game Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

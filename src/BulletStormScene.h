@@ -1,22 +1,21 @@
 #pragma once
-#ifndef __START_SCENE__
-#define __START_SCENE__
+#ifndef __BULLET_STORM_SCENE__
+#define __BULLET_STORM_SCENE__
 
 #include "Scene.h"
 #include "Label.h"
 #include "ship.h"
 #include "MoveState.h"
-#include "Planet.h"
-#include "Mine.h"
 #include "CollisionManager.h"
 #include "SoundManager.h"
-#include "Target.h"
+#include "Bullet.h"
+#include <vector>
 
-class StartScene : public Scene
+class BulletStormScene : public Scene
 {
 public:
-	StartScene();
-	~StartScene();
+	BulletStormScene();
+	~BulletStormScene();
 
 	// Inherited via Scene
 	virtual void draw() override;
@@ -26,22 +25,13 @@ public:
 	virtual void start() override;
 
 private:
-	/*Label* m_pStartLabel;
-	Label* m_pInstructionsLabel;*/
-
 	// Ship Stuff
 	Ship* m_pShip;
 	MoveState m_moveState;
 	glm::vec2 m_speedFactor;
 
-	// Planet Stuff
-	Planet* m_pPlanet;
-
-	// Mine Stuff
-	Mine* m_pMine;
-
 	// Bullet Stuff
-	Target* m_pBullet;
+	std::vector<Bullet*> m_pBullets;
 
 	glm::vec2 m_mousePosition;
 
@@ -56,7 +46,6 @@ private:
 	bool m_displayUI = true;
 
 	// Physics Variables
-	float m_gravity = 9.8f;
 	int m_PPM = 10; // pixels per meter
 	glm::vec2 m_position = glm::vec2(0.0f, 0.0f);
 	glm::vec2 m_velocity = glm::vec2(0.0f, 0.0f);
@@ -66,4 +55,4 @@ private:
 	void m_move();
 };
 
-#endif /* defined (__START_SCENE__) */
+#endif /* defined (__BULLET_STORM_SCENE__) */

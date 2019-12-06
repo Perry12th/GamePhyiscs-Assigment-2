@@ -169,7 +169,9 @@ bool CollisionManager::circleAABBCheck(GameObject * object1, GameObject * object
 	int circleRadius = std::max(object1->getWidth() * 0.5f, object1->getHeight() * 0.5f);
 	// aabb
 	int boxWidth = object2->getWidth();
+	int halfboxWidth = boxWidth * 0.5f;
 	int boxHeight = object2->getHeight();
+	int halfboxHeigth = boxHeight * 0.5f;
 	glm::vec2 boxStart = object2->getPosition() - glm::vec2(boxWidth * 0.5f, boxHeight * 0.5f);
 
 	if(circleAABBsquaredDistance(circleCentre, circleRadius, boxStart, boxWidth, boxHeight) <= (circleRadius * circleRadius))
@@ -177,6 +179,18 @@ bool CollisionManager::circleAABBCheck(GameObject * object1, GameObject * object
 		if (!object2->getIsColliding()) {
 
 			object2->setIsColliding(true);
+
+			float dx = object1->getPosition().x - object2->getPosition().x; // negative means left
+			float dy = object1->getPosition().y - object2->getPosition().y; // negative means top
+
+			glm::vec2 vec = object1->getPosition() - object2->getPosition(); // vector between 
+			glm::vec2 ref = glm::vec2(0.0f, -1.0f);
+
+			float dot = glm::dot(vec, ref);
+
+			float angle = acos(dot / Util::magnitude(vec)) * Util::Rad2Deg;
+
+			//std::cout << "angle: " << angle << std::endl;
 
 			switch (object2->getType()) {
 			case PLANET:
@@ -186,6 +200,39 @@ bool CollisionManager::circleAABBCheck(GameObject * object1, GameObject * object
 			case MINE:
 				std::cout << "Collision with Mine!" << std::endl;
 				TheSoundManager::Instance()->playSound("thunder", 0);
+				break;
+			case BULLET:
+				std::cout << "Collision with Bullet!" << std::endl;
+				TheSoundManager::Instance()->playSound("thunder", 0);
+				break;
+			case SHIP:
+				std::cout << "Collision with Ship!" << std::endl;
+				TheSoundManager::Instance()->playSound("thunder", 0);
+
+				if ( dx > 0.0f && dy > 0.0f) // coming from the right and bottom
+				{
+					std::cout << "bullet from the right" << std::endl;
+					object1->setVelocity(glm::vec2(object1->getVelocity().x, -object1->getVelocity().y));
+				}
+
+				if (dx > 0.0f && dy < 0.0f) // coming from the right and top
+				{
+					std::cout << "bullet from the right" << std::endl;
+					object1->setVelocity(glm::vec2(-object1->getVelocity().x, object1->getVelocity().y));
+				}
+
+				if (dx < 0.0f && dy > 0.0f) // coming from the left and bottom
+				{
+					std::cout << "bullet from the left" << std::endl;
+					object1->setVelocity(glm::vec2(-object1->getVelocity().x, -object1->getVelocity().y));
+				}
+
+				if (dx < 0.0f && dy < 0.0f) // coming from the left and top
+				{
+					std::cout << "bullet from the left" << std::endl;
+					object1->setVelocity(glm::vec2(-object1->getVelocity().x, object1->getVelocity().y));
+				}
+
 				break;
 			default:
 				//std::cout << "Collision with unknown type!" << std::endl;

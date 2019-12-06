@@ -1,29 +1,24 @@
-#include "StartScene.h"
+#include "BulletStormScene.h"
 #include "Game.h"
 #include <ctime>
-#include "GLM/gtx/string_cast.hpp"
-#include <algorithm>
-#include "TileComparators.h"
-#include <iomanip>
 
-StartScene::StartScene()
+BulletStormScene::BulletStormScene()
 {
-	StartScene::start();
+	BulletStormScene::start();
 }
 
-StartScene::~StartScene()
+BulletStormScene::~BulletStormScene()
 {
 }
 
-void StartScene::draw()
+void BulletStormScene::draw()
 {
-	/*m_pStartLabel->draw();
-	m_pInstructionsLabel->draw();*/
+	m_pShip->draw();
 
-	m_pShip->draw();	
-	m_pPlanet->draw();
-	m_pMine->draw();
-	m_pBullet->draw();
+	for (int i = 0; i < m_pBullets.size(); i++)
+	{
+		m_pBullets[i]->draw();
+	}
 
 	// ImGui Rendering section - DO NOT MOVE OR DELETE
 	if (m_displayUI)
@@ -33,35 +28,29 @@ void StartScene::draw()
 		SDL_SetRenderDrawColor(TheGame::Instance()->getRenderer(), 255, 255, 255, 255);
 
 		// debug collider shapes
-		Util::DrawRect(m_pShip->getPosition() - glm::vec2(m_pShip->getWidth() * 0.5f, m_pShip->getHeight() *0.5f), m_pShip->getWidth(), m_pShip->getHeight());
-		Util::DrawRect(m_pPlanet->getPosition() - glm::vec2(m_pPlanet->getWidth() * 0.5f, m_pPlanet->getHeight() *0.5f), m_pPlanet->getWidth(), m_pPlanet->getHeight());
-		Util::DrawRect(m_pMine->getPosition() - glm::vec2(m_pMine->getWidth() * 0.5f, m_pMine->getHeight() *0.5f), m_pMine->getWidth(), m_pMine->getHeight());
-		
+		//Util::DrawRect(m_pShip->getPosition() - glm::vec2(m_pShip->getWidth() * 0.5f, m_pShip->getHeight() *0.5f), m_pShip->getWidth(), m_pShip->getHeight());
 
 		//Util::DrawCircle(m_pShip->getPosition(), std::max(m_pShip->getWidth() * 0.5, m_pShip->getHeight() * 0.5));
-		//Util::DrawCircle(m_pPlanet->getPosition(), std::max(m_pPlanet->getWidth() * 0.5, m_pPlanet->getHeight() * 0.5));
-		//Util::DrawCircle(m_pMine->getPosition(), std::max(m_pMine->getWidth() * 0.5, m_pMine->getHeight() * 0.5));
 	}
 }
 
-void StartScene::update()
+void BulletStormScene::update()
 {
 	m_move();
 	m_pShip->update();
-	m_pPlanet->update();
-	m_pMine->update();
-	m_pBullet->update();
 
-	//CollisionManager::squaredRadiusCheck(m_pShip, m_pPlanet);
-	//CollisionManager::squaredRadiusCheck(m_pShip, m_pMine);
+	for (int i = 0; i < m_pBullets.size(); i++)
+	{
+		m_pBullets[i]->update();
+	}
 
-	CollisionManager::AABBCheck(m_pShip, m_pPlanet);
-	CollisionManager::AABBCheck(m_pShip, m_pMine);
-
-	//CollisionManager::circleAABBCheck(m_pShip, m_pPlanet);
-	//CollisionManager::circleAABBCheck(m_pShip, m_pMine);
-	
-	CollisionManager::circleAABBCheck(m_pBullet, m_pShip);
+	for (int i = 0; i < m_pBullets.size(); i++)
+	{
+		if (CollisionManager::circleAABBCheck(m_pShip, m_pBullets[i]))
+		{
+			m_pBullets[i]->reset();
+		}
+	}
 
 	if (m_displayUI)
 	{
@@ -69,17 +58,19 @@ void StartScene::update()
 	}
 }
 
-void StartScene::clean()
+void BulletStormScene::clean()
 {
-	/*delete m_pStartLabel;
-	delete m_pInstructionsLabel;*/
 
 	delete m_pShip;
 
+	for (int i = 0; i < m_pBullets.size(); i++)
+	{
+		delete m_pBullets[i];
+	}
 	removeAllChildren();
 }
 
-void StartScene::handleEvents()
+void BulletStormScene::handleEvents()
 {
 	ImGuiIO& io = ImGui::GetIO();
 	int wheel = 0;
@@ -111,8 +102,8 @@ void StartScene::handleEvents()
 			case SDLK_BACKQUOTE:
 				m_displayUI = (m_displayUI) ? false : true;
 				break;
-			
-			/***************************************************************/
+
+				/***************************************************************/
 			case SDLK_w:
 				m_moveState = MOVE_UP;
 				break;
@@ -182,38 +173,35 @@ void StartScene::handleEvents()
 	m_ImGuiSetStyle();
 }
 
-void StartScene::start()
+void BulletStormScene::start()
 {
 	TheSoundManager::Instance()->load(
-		"../Assets/audio/yay.ogg", 
+		"../Assets/audio/yay.ogg",
 		"yay", SOUND_SFX);
 	TheSoundManager::Instance()->load(
-		"../Assets/audio/thunder.ogg", 
+		"../Assets/audio/thunder.ogg",
 		"thunder", SOUND_SFX);
 
 	m_position = glm::vec2(400.0f, 300.0f);
 	m_pShip = new Ship();
 	m_pShip->setPosition(m_position);
+	m_pShip->setRotation(270.0f);
 	addChild(m_pShip);
 
 	m_moveState = MOVE_IDLE;
 	m_speedFactor = glm::vec2(4.0f, 4.0f);
 
-	// Instantiate a Planet
-	m_pPlanet = new Planet();
-	m_pPlanet->setPosition(glm::vec2(200.0f, 100.0));
-	
-	// Instantiate a Space Mine
-	m_pMine = new Mine();
-	m_pMine->setPosition(glm::vec2(200.0f, 200.0));
-
-	// Instantiate a Bullet
-	m_pBullet = new Target();
-	m_pBullet->reset();
+	for (int i = 0; i < 30; i++)
+	{
+		// Instantiate a Bullet
+		m_pBullets.push_back(new Bullet());
+		m_pBullets.back()->reset();
+		addChild(m_pBullets.back());
+	}
 
 }
 
-void StartScene::m_ImGuiKeyMap()
+void BulletStormScene::m_ImGuiKeyMap()
 {
 	ImGuiIO& io = ImGui::GetIO();
 
@@ -242,7 +230,7 @@ void StartScene::m_ImGuiKeyMap()
 	io.KeyMap[ImGuiKey_Z] = SDL_SCANCODE_Z;
 }
 
-void StartScene::m_ImGuiSetStyle()
+void BulletStormScene::m_ImGuiSetStyle()
 {
 	ImGuiStyle& style = ImGui::GetStyle();
 
@@ -287,7 +275,7 @@ void StartScene::m_ImGuiSetStyle()
 	style.Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
 }
 
-void StartScene::m_updateUI()
+void BulletStormScene::m_updateUI()
 {
 	// Prepare Window Frame
 	ImGui::NewFrame();
@@ -336,215 +324,15 @@ void StartScene::m_updateUI()
 		ImGui::End();
 	}
 
-	/*************************************************************************************************/
-	if (ImGui::Button("Enable Gravity"))
-	{
-		/*m_respawnShips();
-		m_moveAlongPath = false;*/
-	}
-
-	//ImGui::SameLine();
-
-	//if (ImGui::Button("Respawn Planet"))
-	//{
-	//	/*m_respawnPlanet();
-	//	m_moveAlongPath = false;*/
-	//}
-
-	//ImGui::SameLine();
-
-	//if (ImGui::Button("Respawn Mines"))
-	//{
-	//	/*m_respawnMines();
-	//	m_moveAlongPath = false;*/
-	//}
-
-	//ImGui::SameLine();
-
-	//if (ImGui::Button("Toggle Grid"))
-	//{
-	//	/*m_debugMode = (m_debugMode) ? false : true;*/
-	//}
-
-	//ImGui::SameLine();
-
-	//if (ImGui::Button("Reset All"))
-	//{
-	//	/*m_resetAll();*/
-	//}
-
-	//ImGui::PushItemWidth(80);
-	///*if (ImGui::SliderFloat("Manhattan Factor", m_grid[0][0]->getManhanttanFactor(), 0.1f, 10.0f, "%.1f"))
-	//{
-	//	float newFactor = *m_grid[0][0]->getManhanttanFactor();
-
-	//	for (size_t row = 0; row < m_rowSize; row++)
-	//	{
-	//		for (size_t col = 0; col < m_colSize; col++)
-	//		{
-	//			m_grid[col][row]->setManhanttanFactor(newFactor);
-	//		}
-	//	}
-	//}*/
-
-	//ImGui::SameLine();
-
-	///*if (ImGui::SliderFloat("Euclidean Factor", m_grid[0][0]->getEuclideanFactor(), 0.1f, 10.0f, "%.1f"))
-	//{
-	//	float newFactor = *m_grid[0][0]->getEuclideanFactor();
-
-	//	for (size_t row = 0; row < m_rowSize; row++)
-	//	{
-	//		for (size_t col = 0; col < m_colSize; col++)
-	//		{
-	//			m_grid[col][row]->setEuclideanFactor(newFactor);
-	//		}
-	//	}
-	//}*/
-
-	//ImGui::SameLine();
-
-	///*if (ImGui::SliderFloat("Mine Factor", m_grid[0][0]->getMineFactor(), 0.1f, 10.0f, "%.1f"))
-	//{
-	//	float newFactor = *m_grid[0][0]->getMineFactor();
-
-	//	for (size_t row = 0; row < m_rowSize; row++)
-	//	{
-	//		for (size_t col = 0; col < m_colSize; col++)
-	//		{
-	//			m_grid[col][row]->setMineFactor(newFactor);
-	//		}
-	//	}
-	//}*/
-	//ImGui::PopItemWidth();
-
-	//if (ImGui::CollapsingHeader("Ship Locations"))
-	//{
-	//	/*ImGui::PushItemWidth(80);
-	//	int count = 0;
-
-	//	std::string shipText;
-	//	shipText = "Ship " + count;
-	//	shipText += " Position: ";
-	//	ImGui::Text(shipText.c_str());
-	//	ImGui::SameLine();
-	//	glm::vec2 pos = m_ship.getPosition();
-	//	ImGui::InputFloat2("", &pos[0], 0, ImGuiInputTextFlags_ReadOnly);
-	//	count++;
-	//	ImGui::PopItemWidth();*/
-	//}
-
-	//if (ImGui::CollapsingHeader("Planet Location"))
-	//{
-	//	/*ImGui::PushItemWidth(80);
-	//	std::string planetText;
-	//	planetText = "Planet Position: ";
-	//	ImGui::Text(planetText.c_str());
-	//	ImGui::SameLine();
-	//	glm::vec2 pos = m_planet.getPosition();
-	//	ImGui::InputFloat2("", &pos[0], 0, ImGuiInputTextFlags_ReadOnly);
-	//	ImGui::PopItemWidth();*/
-	//}
-
-	//if (ImGui::CollapsingHeader("Mine Locations"))
-	//{
-	//	/*ImGui::PushItemWidth(80);
-	//	int count = 0;
-	//	for (Mine mine : m_pMines)
-	//	{
-	//		std::string mineText;
-	//		mineText = "Mine " + count;
-	//		mineText += " Position: ";
-	//		ImGui::Text(mineText.c_str());
-	//		ImGui::SameLine();
-	//		glm::vec2 pos = mine.getPosition();
-	//		ImGui::InputFloat2("", &pos[0], 0, ImGuiInputTextFlags_ReadOnly);
-	//		count++;
-	//	}
-	//	ImGui::PopItemWidth();*/
-	//}
-
-	//ImGui::Separator();
-
-	//ImGui::PushItemWidth(80);
-	////glm::vec2 targetPosition = getTargetPosition();
-	///*if (ImGui::SliderFloat("Target X Position", &targetPosition.x, 0.0f, 800.0f, "%.0f"))
-	//{
-	//	setTargetPosition(targetPosition);
-	//}*/
-	//ImGui::SameLine();
-	/*if (ImGui::SliderFloat("Target Y Position", &targetPosition.y, 0.0f, 600.0f, "%.0f"))
-	{
-		setTargetPosition(targetPosition);
-	}*/
-	//ImGui::PopItemWidth();
-
-	//ImGui::Separator();
-
-	//if (ImGui::Button("Find Path"))
-	//{
-	//	//std::cout << "**** NEW PATH ****" << std::endl;
-
-	//	/*findShortestPath();
-	//	m_moveAlongPath = false;*/
-	//}
-
-	//if (ImGui::CollapsingHeader("Open Tiles"))
-	//{
-	//	/*ImGui::PushItemWidth(80);
-	//	int count = 0;
-	//	for (Tile* tile : m_pOpen)
-	//	{
-	//		std::string tileText;
-	//		tileText = "Tile ";
-	//		tileText += std::to_string(count);
-	//		tileText += " Position: ";
-	//		ImGui::Text(tileText.c_str());
-	//		ImGui::SameLine();
-	//		glm::vec2 pos = tile->getPosition();
-	//		ImGui::InputFloat2("", &pos[0], 0, ImGuiInputTextFlags_ReadOnly);
-	//		count++;
-	//	}
-	//	ImGui::PopItemWidth();*/
-	//}
-
-	//if (ImGui::CollapsingHeader("Closed Tiles"))
-	//{
-	//	/*ImGui::PushItemWidth(80);
-	//	int count = 0;
-	//	for (Tile* tile : m_pClosed)
-	//	{
-	//		std::string tileText;
-	//		tileText = "Tile ";
-	//		tileText += std::to_string(count);
-	//		tileText += " Position: ";
-	//		ImGui::Text(tileText.c_str());
-	//		ImGui::SameLine();
-	//		glm::vec2 pos = tile->getPosition();
-	//		ImGui::InputFloat2("", &pos[0], 0, ImGuiInputTextFlags_ReadOnly);
-	//		count++;
-	//	}
-	//	ImGui::PopItemWidth();*/
-	//}
-
-	/*if (!m_pOpen.empty())
-	{
-		if (ImGui::Button("Move Ship Along Path"))
-		{
-			m_moveAlongPath = true;
-			m_pathLength = 0;
-		}
-	}*/
-
 	// Main Window End
 	ImGui::End();
 }
 
-void StartScene::m_move()
+void BulletStormScene::m_move()
 {
 	//m_acceleration = glm::vec2(0.0f, 0.5 * m_gravity * m_PPM);
 
-	if(m_moveState == MOVE_UP)
+	if (m_moveState == MOVE_UP)
 	{
 		m_velocity = glm::vec2(m_velocity.x, -1.0f);
 	}
@@ -569,7 +357,7 @@ void StartScene::m_move()
 		m_velocity = glm::vec2(0.0f, 0.0f);
 	}
 
-	
+
 	m_position = m_pShip->getPosition() + m_velocity * m_speedFactor; // +m_acceleration;
 	m_pShip->setPosition(m_position);
 }

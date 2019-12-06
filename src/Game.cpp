@@ -97,7 +97,7 @@ void Game::start()
 {
 	m_currentSceneState = SceneState::NO_SCENE;
 
-	changeSceneState(SceneState::START_SCENE);
+	changeSceneState(SceneState::BULLET_STORM_SCENE);
 }
 
 SDL_Renderer * Game::getRenderer()
@@ -141,6 +141,10 @@ void Game::changeSceneState(SceneState newState)
 		case SceneState::START_SCENE:
 			m_currentScene = new StartScene();
 			std::cout << "start scene activated" << std::endl;
+			break;
+		case SceneState::BULLET_STORM_SCENE:
+			m_currentScene = new BulletStormScene();
+			std::cout << "BulletStormScene activated" << std::endl;
 			break;
 		case SceneState::PLAY_SCENE:
 			m_currentScene = new PlayScene();

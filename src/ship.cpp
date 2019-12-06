@@ -27,7 +27,7 @@ Ship::Ship() :
 	setState(State::IDLE);
 
 	// set the collider shape
-	setCollisionShape(CIRCLE);
+	setCollisionShape(RECTANGLE);
 }
 
 

@@ -23,6 +23,7 @@
 
 // Scenes
 #include "StartScene.h"
+#include "BulletStormScene.h"
 #include "PlayScene.h"
 #include "EndScene.h"
 
